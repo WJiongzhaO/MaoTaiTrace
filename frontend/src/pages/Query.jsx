@@ -51,11 +51,13 @@ export function Query({ contract }) {
 
     try {
       const result = await contract.getRecords(batchId);
-      setRecords(result || []);
-      if (result?.length === 0) {
+      const recordsArray = Array.from(result || []);
+      setRecords(recordsArray);
+      if (recordsArray.length === 0) {
         showToast('未找到该批次的溯源记录', 'info');
       }
-    } catch {
+    } catch (err) {
+      console.error('Query error:', err);
       showToast('查询失败，请稍后重试', 'error');
       setRecords([]);
     } finally {

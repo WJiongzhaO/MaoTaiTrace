@@ -27,6 +27,8 @@ export function ToastContainer() {
               ? 'bg-green-600 text-white'
               : toast.type === 'error'
               ? 'bg-red-600 text-white'
+              : toast.type === 'warning'
+              ? 'bg-amber-600 text-white'
               : 'bg-gray-700 text-white'
           }`}
         >

@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useWeb3 } from './hooks/useWeb3';
 import { WalletButton } from './components/WalletButton';
 import { TabBar } from './components/TabBar';
 import { ToastContainer } from './components/Toast';
+import { showToast } from './utils/showToast';
 import { Home } from './pages/Home';
 import { Add } from './pages/Add';
 import { Query } from './pages/Query';
@@ -12,7 +14,29 @@ import contractInfo from './utils/contractInfo.json';
 import './App.css';
 
 function App() {
-  const { account, contract, isConnecting, connect, disconnect } = useWeb3(contractInfo);
+  const {
+    account,
+    contract,
+    isConnecting,
+    error,
+    isWrongChain,
+    switchToLocalhost,
+    connect,
+    disconnect,
+    switchAccount,
+  } = useWeb3(contractInfo);
+
+  useEffect(() => {
+    if (error) {
+      showToast(error, 'error');
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (isWrongChain) {
+      showToast('请切换到 Hardhat Localhost 网络以使用本应用', 'warning', 5000);
+    }
+  }, [isWrongChain]);
 
   return (
     <BrowserRouter>
@@ -28,8 +52,11 @@ function App() {
             <WalletButton
               account={account}
               isConnecting={isConnecting}
+              isWrongChain={isWrongChain}
               onConnect={connect}
               onDisconnect={disconnect}
+              onSwitchAccount={switchAccount}
+              onSwitchToLocalhost={switchToLocalhost}
             />
           </div>
         </header>
